@@ -28,7 +28,7 @@ gem 'vendorer', :group => :development
 ```
 
 
-Usage
+Configuration
 -----
 
 Add a `Vendorfile` to your project root:
@@ -60,28 +60,62 @@ from 'https://github.com/grosser/parallel_tests.git' do
   folder 'spec'
   folder 'renamed-folder', 'spec'
 end
+
+#Vendor namespace (works with update)
+vendor 'jquery' do 
+  folder 'vendor/assets/javascripts' do
+    file 'jquery.js', 'http://code.jquery.com/jquery-latest.js'
+  end
+end
 ```
 <!-- extracted by vendorer init -->
 
- - Create a new Vendorfile: `vendorer init`
+Usage
+-----
+
+- Create a new Vendorfile: `vendorer init`
  - excute all installations: `vendorer`
  - Update all dependencies: `vendorer update`
  - update a single dependency: `vendorer update vendor/assets/javascripts/jquery.min.js`
  - update everything in a specific folder: `vendorer update vendor/assets/javascripts`
+ - update a single vendor: `vendor update jquery`
 
+```shell
+Vendorer keeps your vendor files up to date.
+
+Usage:
+
+Create a Vendorfile in your project root with:
+
+    file 'public/javascripts/jquery.min.js' => 'http://code.jquery.com/jquery-latest.min.js'
+    folder 'vendor/plugins/parallel_tests' => 'https://github.com/grosser/parallel_tests.git'
+
+Run `vendorer init` to create Vendorfile.
+Run `vendorer` to install.
+Run `vendorer update` to update.
+
+Options:
+    -s, --[no-]skip                  Skip force installing missing files
+                                     Default: false
+    -d, --[no-]destructive_folders   Destroy folders prior to writing new contents
+                                     Default: true
+    -v, --version                    Show Version
+    -h, --help                       Show this.
+```
 
 TODO
-====
+-----
  - nice error message when no Vendorfile was found
 
 Author
-======
+-----
 
 ### [Contributors](http://github.com/grosser/vendorer/contributors)
  - [Kurtis Rainbolt-Greene](https://github.com/krainboltgreene)
  - [Ivan K.](https://github.com/divout)
  - [Matt Brictson](https://github.com/mbrictson)
-
+ - [Shadowbq](https://github.com/shadowbq)
+ 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
 License: MIT<br/>
