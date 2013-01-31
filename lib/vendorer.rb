@@ -29,7 +29,7 @@ class Vendorer
     if @copy_from_path or url
       target_path = complete_path(path)
       update_or_not target_path do
-        run "rm -rf #{target_path}"
+        run "rm -rf #{target_path}" if @options[:destructive_folders]
         run "mkdir -p #{File.dirname(target_path)}"
         if @copy_from_path
           copy_from_path(target_path, url || path)
@@ -42,6 +42,12 @@ class Vendorer
       @sub_path << path
       yield
       @sub_path.pop
+    end
+  end
+
+  def vendor(name)
+    if (@options[:update] and @options[:update].include?(name))
+      yield
     end
   end
 
@@ -76,7 +82,14 @@ class Vendorer
 
   def update_or_not(path)
     update_requested = (@options[:update] and (@options[:update] == true or path.start_with?(@options[:update]+'/') or path == @options[:update]))
-    if update_requested or not File.exist?(path)
+    # if it is missing and we didnt ask to skip
+    if (not File.exist?(path) and not @options[:skip])
+      puts "installing #{path}"
+      yield
+    # if it is missing we asked to skip
+    elsif (not File.exist?(path) and @options[:skip])
+      puts "skipping #{path}"
+    elsif update_requested
       puts "updating #{path}"
       yield
     else

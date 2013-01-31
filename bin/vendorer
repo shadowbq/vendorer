@@ -5,6 +5,9 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 options = {}
 parser = OptionParser.new do |opts|
+  options[:skip] = false
+  options[:verbose] = false
+  options[:destructive_folders] = true
   opts.banner = <<BANNER
 Vendorer keeps your vendor files up to date.
 
@@ -21,6 +24,12 @@ Run `vendorer update` to update.
 
 Options:
 BANNER
+  opts.on("-s", "--[no-]skip", "Skip force installing missing files", "Default: #{options[:skip]}") do |s|
+    options[:skip] = s
+  end
+  opts.on("-d", "--[no-]destructive_folders", "Destroy folders prior to writing new contents", "Default: #{options[:destructive_folders]}" ) do |s|
+    options[:destructive_folders] = s
+  end
   opts.on("-v", "--version", "Show Version"){
     require 'vendorer/version'
     puts Vendorer::VERSION
@@ -32,6 +41,7 @@ parser.parse!
 
 require 'vendorer'
 v = Vendorer.new(:update => (ARGV[1] || true if ARGV[0] == 'update'),
-                 :init   => (true if ARGV[0] == 'init'))
+                 :init   => (true if ARGV[0] == 'init'),  :skip  => options[:skip], :verbose => options[:verbose], :destructive_folders => options[:destructive_folders])
 v.init and exit if ARGV[0] == 'init'
+
 v.parse(File.read('Vendorfile'))
